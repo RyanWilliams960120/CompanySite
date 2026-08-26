@@ -1,0 +1,37 @@
+{
+  "redirects": [
+    {
+      "source": "/careers.html",
+      "destination": "/careers",
+      "permanent": true
+    },
+    {
+      "source": "/careers/index.html",
+      "destination": "/careers",
+      "permanent": true
+    },
+    {
+      "source": "/careers/apply/index.html",
+      "destination": "/careers/apply",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/careers",
+      "destination": "/careers.html"
+    },
+    {
+      "source": "/careers/",
+      "destination": "/careers.html"
+    },
+    {
+      "source": "/careers/apply",
+      "destination": "/careers/apply/index.html"
+    },
+    {
+      "source": "/careers/apply/",
+      "destination": "/careers/apply/index.html"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "name": "dracoinlabs-site",
+  "private": true,
+  "dependencies": {
+    "busboy": "^1.6.0",
+    "nodemailer": "^9.0.5"
+  }
+}

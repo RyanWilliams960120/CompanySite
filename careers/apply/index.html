@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apply | Careers at DracoinLabs</title>
+  <meta name="description" content="Apply to join DracoinLabs and help build the Dracoin Cross-Chain Staking Platform.">
+  <meta name="robots" content="noindex, follow">
+  <link rel="canonical" href="https://www.dracoinlabs.com/careers/apply">
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="icon" type="image/png" href="../../assets/favicon.png" sizes="256x256">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="DracoinLabs">
+  <meta property="og:url" content="https://www.dracoinlabs.com/careers/apply">
+  <meta property="og:title" content="Apply | Careers at DracoinLabs">
+  <meta property="og:description" content="Submit your application to the DracoinLabs engineering team.">
+  <meta property="og:image" content="https://www.dracoinlabs.com/assets/logo-300x300.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+  <header class="header header--dark" id="header">
+    <nav class="nav container">
+      <a href="../../index.html" class="logo">
+        <img class="logo-mark" src="../../assets/logo-mark.svg" alt="" width="32" height="32">
+        <span class="logo-text"><span class="logo-name">DracoinLabs</span><span class="logo-tagline">Web3 Infrastructure</span></span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="../../index.html">Home</a></li>
+        <li><a href="../../about.html">About</a></li>
+        <li><a href="../../technology.html">Technology</a></li>
+        <li><a href="../../solutions.html">Solutions</a></li>
+        <li><a href="../index.html" class="active">Careers</a></li>
+        <li><button type="button" class="nav-book" id="bookBtn" aria-haspopup="dialog">Book</button></li>
+        <li><a href="../../index.html#contact" class="nav-cta">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero hero--short">
+      <div class="hero-media">
+        <img class="hero-img"
+          src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=1920&q=85"
+          alt="Professional team collaboration"
+          width="2400" height="1350" fetchpriority="high">
+        <div class="hero-overlay hero-overlay--heavy"></div>
+      </div>
+      <div class="container hero-body">
+        <a href="../index.html" class="breadcrumb">&larr; Back to Careers</a>
+        <h1 class="hero-title">Submit your application</h1>
+        <p class="hero-lead" id="applyHeroLead">Join DracoinLabs and help engineer the Dracoin Cross-Chain Staking Platform.</p>
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="container apply-grid">
+        <div class="apply-info" data-reveal>
+          <span class="section-label">Application</span>
+          <h2 class="section-title">Applying for</h2>
+          <div class="apply-role-card" id="applyRoleCard">
+            <p class="apply-role-label">Position</p>
+            <p class="apply-role-title" id="applyRoleTitle">Select a role</p>
+            <p class="apply-role-meta" id="applyRoleMeta"></p>
+          </div>
+          <div class="apply-checklist">
+            <h3>Required</h3>
+            <ul class="about-list">
+              <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Full name and email</li>
+              <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>LinkedIn URL</li>
+              <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Years of experience</li>
+              <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Resume / CV (PDF, DOC, or DOCX)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="apply-success card" id="applySuccess" hidden>
+          <h2>Application Submitted Successfully</h2>
+          <p>Thank you for your interest in joining DracoinLabs.</p>
+          <p>Your application has been submitted to our recruiting team.</p>
+          <p>We will review your application and contact you if your experience matches our current requirements.</p>
+          <a href="../index.html" class="btn btn-primary">Back to Careers</a>
+        </div>
+
+        <form class="card contact-form" id="careersApplyForm" novalidate data-reveal enctype="multipart/form-data">
+          <input type="hidden" name="position" id="position" value="">
+          <input type="hidden" name="formStarted" id="formStarted" value="">
+          <div class="hp-field" aria-hidden="true">
+            <label for="website">Website</label>
+            <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+          </div>
+
+          <div class="form-group" id="positionSelectGroup" hidden>
+            <label for="positionSelect">Position</label>
+            <select id="positionSelect">
+              <option value="">Select a position</option>
+            </select>
+            <p class="field-error" data-error-for="position"></p>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="name">Full name</label>
+              <input type="text" id="name" name="name" required autocomplete="name" maxlength="120" placeholder="Jane Doe">
+              <p class="field-error" data-error-for="name"></p>
+            </div>
+            <div class="form-group">
+              <label for="email">Email address</label>
+              <input type="email" id="email" name="email" required autocomplete="email" maxlength="160" placeholder="jane@email.com">
+              <p class="field-error" data-error-for="email"></p>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="phone">Phone number <span class="label-optional">Optional</span></label>
+              <input type="tel" id="phone" name="phone" autocomplete="tel" maxlength="40" placeholder="+1 555 0100">
+              <p class="field-error" data-error-for="phone"></p>
+            </div>
+            <div class="form-group">
+              <label for="location">Current location <span class="label-optional">Optional</span></label>
+              <input type="text" id="location" name="location" maxlength="120" placeholder="United States">
+              <p class="field-error" data-error-for="location"></p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="linkedin">LinkedIn URL</label>
+            <input type="url" id="linkedin" name="linkedin" required placeholder="https://linkedin.com/in/username">
+            <p class="field-error" data-error-for="linkedin"></p>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="github">GitHub URL <span class="label-optional">Optional</span></label>
+              <input type="url" id="github" name="github" placeholder="https://github.com/username">
+              <p class="field-error" data-error-for="github"></p>
+            </div>
+            <div class="form-group">
+              <label for="portfolio">Portfolio URL <span class="label-optional">Optional</span></label>
+              <input type="url" id="portfolio" name="portfolio" placeholder="https://...">
+              <p class="field-error" data-error-for="portfolio"></p>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="experience">Years of experience</label>
+              <input type="number" id="experience" name="experience" required min="0" max="50" step="1" placeholder="e.g. 8">
+              <p class="field-error" data-error-for="experience"></p>
+            </div>
+            <div class="form-group">
+              <label for="engagement">Preferred employment type <span class="label-optional">Optional</span></label>
+              <select id="engagement" name="engagement">
+                <option value="">Select type</option>
+                <option value="Full-Time">Full-Time</option>
+                <option value="Contract">Contract</option>
+                <option value="Consulting">Consulting</option>
+              </select>
+              <p class="field-error" data-error-for="engagement"></p>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="compensation">Compensation expectations <span class="label-optional">Optional</span></label>
+              <input type="text" id="compensation" name="compensation" maxlength="80" placeholder="e.g. $160,000/year">
+              <p class="field-error" data-error-for="compensation"></p>
+            </div>
+            <div class="form-group">
+              <label for="availability">Availability <span class="label-optional">Optional</span></label>
+              <input type="text" id="availability" name="availability" maxlength="80" placeholder="e.g. 2 weeks">
+              <p class="field-error" data-error-for="availability"></p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="resume">Resume / CV</label>
+            <input type="file" id="resume" name="resume" required accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+            <p class="field-hint">PDF, DOC, or DOCX. Maximum 2 MB.</p>
+            <p class="field-error" data-error-for="resume"></p>
+          </div>
+          <div class="form-group">
+            <label for="cover">Cover letter / additional information <span class="label-optional">Optional</span></label>
+            <textarea id="cover" name="cover" rows="5" maxlength="8000" placeholder="Share relevant experience, production systems, or why this platform interests you."></textarea>
+            <p class="field-error" data-error-for="cover"></p>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full" id="applySubmit">Submit Application</button>
+          <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a href="../../index.html" class="logo"><img class="logo-mark" src="../../assets/logo-mark.svg" alt="" width="32" height="32"><span class="logo-text"><span class="logo-name">DracoinLabs</span><span class="logo-tagline">Web3 Infrastructure</span></span></a>
+        <p>Enterprise blockchain and Web3 infrastructure on Solana.</p>
+      </div>
+      <div class="footer-col"><h4>Platform</h4><ul><li><a href="../../technology.html">Technology</a></li><li><a href="../../solutions.html">Solutions</a></li><li><a href="../../about.html">About</a></li></ul></div>
+      <div class="footer-col"><h4>Company</h4><ul><li><a href="../index.html">Careers</a></li><li><a href="../../index.html#contact">Contact</a></li></ul></div>
+      <div class="footer-col"><h4>Connect</h4><ul><li><a href="mailto:info@dracoinlabs.com">info@dracoinlabs.com</a></li><li><a href="https://www.linkedin.com/company/dracoinlabs/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li></ul></div>
+    </div>
+    <div class="footer-bottom container"><p>&copy; 2026 DracoinLabs</p><p>All rights reserved</p></div>
+  </footer>
+
+  <div class="booking-modal" id="bookingModal" role="dialog" aria-modal="true" aria-labelledby="bookingTitle" hidden>
+    <div class="booking-dialog">
+      <div class="booking-head">
+        <div>
+          <h2 id="bookingTitle">Book a meeting</h2>
+          <p>Schedule a consultation with the DracoinLabs team.</p>
+        </div>
+        <button type="button" class="booking-close" aria-label="Close">&times;</button>
+      </div>
+      <div class="booking-calendar">
+        <iframe id="bookingFrame" title="DracoinLabs meeting calendar" loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
+  <script src="../../js/careers-data.js"></script>
+  <script src="../../js/apply.js"></script>
+  <script src="../../js/app.js"></script>
+  <script src="../../js/booking.js"></script>
+</body>
+</html>

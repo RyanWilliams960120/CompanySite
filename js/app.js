@@ -92,16 +92,47 @@
     return null;
   }, 'Thank you. We\'ll respond within one business day.');
 
+  function fieldValue(form, name) {
+    var el = form.elements[name];
+    return el ? String(el.value || '').trim() : '';
+  }
+
+  function isRequired(form, name) {
+    var el = form.elements[name];
+    return !!(el && el.required);
+  }
+
+  function validUrl(value) {
+    if (!value) return true;
+    try {
+      var parsed = new URL(value);
+      return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+    } catch (err) {
+      return false;
+    }
+  }
+
   bindForm(applyForm, function () {
-    var n = applyForm.name.value.trim();
-    var e = applyForm.email.value.trim();
-    var g = applyForm.github.value.trim();
-    var eng = applyForm.engagement.value;
-    var exp = applyForm.experience.value.trim();
-    var resume = applyForm.resume && applyForm.resume.value.trim();
-    if (!n || !e || !g || !eng || !exp) return 'Please fill in all required fields.';
-    if (applyForm.resume && applyForm.resume.required && !resume) return 'Please provide a link to your CV or resume.';
+    var n = fieldValue(applyForm, 'name');
+    var e = fieldValue(applyForm, 'email');
+    var g = fieldValue(applyForm, 'github');
+    var eng = fieldValue(applyForm, 'engagement');
+    var exp = fieldValue(applyForm, 'experience');
+    var resume = fieldValue(applyForm, 'resume');
+    var position = fieldValue(applyForm, 'position');
+    var linkedin = fieldValue(applyForm, 'linkedin');
+    var portfolio = fieldValue(applyForm, 'portfolio');
+
+    if (!n || !e) return 'Please fill in all required fields.';
+    if (isRequired(applyForm, 'position') && !position) return 'Please select a position.';
+    if (isRequired(applyForm, 'github') && !g) return 'Please fill in all required fields.';
+    if (isRequired(applyForm, 'engagement') && !eng) return 'Please fill in all required fields.';
+    if (isRequired(applyForm, 'experience') && !exp) return 'Please fill in all required fields.';
+    if (isRequired(applyForm, 'resume') && !resume) return 'Please provide a link to your CV or resume.';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) return 'Please enter a valid email address.';
+    if (!validUrl(g) || !validUrl(resume) || !validUrl(linkedin) || !validUrl(portfolio)) {
+      return 'Please enter valid http(s) URLs for profile and resume links.';
+    }
     return null;
   }, 'Thank you. Your application has been received.');
 })();

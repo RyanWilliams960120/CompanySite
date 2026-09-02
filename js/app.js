@@ -83,14 +83,72 @@
     });
   }
 
-  bindForm(contactForm, function () {
-    var n = contactForm.name.value.trim();
-    var e = contactForm.email.value.trim();
-    var m = contactForm.message.value.trim();
-    if (!n || !e || !m) return 'Please fill in all required fields.';
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) return 'Please enter a valid email address.';
-    return null;
-  }, 'Thank you. We\'ll respond within one business day.');
+  if (contactForm) {
+    var contactSubmit = document.getElementById('contactSubmit') || contactForm.querySelector('[type="submit"]');
+    var contactSending = false;
+    contactForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (contactSending) return;
+      if (!formStatus) return;
+      formStatus.textContent = '';
+      formStatus.className = 'form-status';
+      var n = contactForm.name.value.trim();
+      var em = contactForm.email.value.trim();
+      var m = contactForm.message.value.trim();
+      if (!n || !em || !m) {
+        formStatus.textContent = 'Please fill in all required fields.';
+        formStatus.classList.add('error');
+        return;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) {
+        formStatus.textContent = 'Please enter a valid email address.';
+        formStatus.classList.add('error');
+        return;
+      }
+      contactSending = true;
+      if (contactSubmit) {
+        contactSubmit.disabled = true;
+        contactSubmit.textContent = 'Sending...';
+        contactSubmit.classList.add('loading');
+      }
+      fetch('/api/contact', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          name: n,
+          email: em,
+          company: contactForm.company ? contactForm.company.value.trim() : '',
+          service: contactForm.service ? contactForm.service.value : '',
+          message: m,
+          website: contactForm.website ? contactForm.website.value : ''
+        })
+      }).then(function (res) {
+        return res.json().then(function (body) {
+          return { ok: res.ok && body && body.ok, error: body && body.error };
+        }).catch(function () {
+          return { ok: false };
+        });
+      }).then(function (result) {
+        if (!result.ok) {
+          throw new Error(result.error || 'Unable to send your message right now. Please try again.');
+        }
+        formStatus.textContent = 'Thank you. We\'ll respond within one business day.';
+        formStatus.classList.add('success');
+        contactForm.reset();
+      }).catch(function (err) {
+        formStatus.textContent = err.message || 'Unable to send your message right now. Please try again.';
+        formStatus.classList.add('error');
+      }).finally(function () {
+        contactSending = false;
+        if (contactSubmit) {
+          contactSubmit.disabled = false;
+          contactSubmit.textContent = 'Send message';
+          contactSubmit.classList.remove('loading');
+        }
+      });
+    });
+  }
 
   function fieldValue(form, name) {
     var el = form.elements[name];

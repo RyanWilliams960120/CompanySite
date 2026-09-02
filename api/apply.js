@@ -236,7 +236,7 @@ async function handler(req, res) {
   const id = crypto.randomUUID();
   const filename = safeResumeName(parsed.file.filename, resumeMeta.extension);
   const storagePath = id + '/' + filename;
-  const resumeBytes = new Uint8Array(parsed.file.buffer);
+  const resumeHex = parsed.file.buffer.toString('hex');
 
   let inserted;
   try {
@@ -250,7 +250,7 @@ async function handler(req, res) {
         ${linkedin}, ${github || null}, ${portfolio || null}, ${Number(experience)},
         ${engagement || null}, ${compensation || null}, ${availability || null}, ${cover || null},
         ${filename}, ${resumeMeta.contentType}, ${parsed.file.buffer.length}, ${storagePath},
-        ${resumeBytes}, ${'new'}
+        decode(${resumeHex}, 'hex'), ${'new'}
       )
       RETURNING id, created_at
     `;
@@ -284,7 +284,9 @@ async function handler(req, res) {
       compensation: compensation,
       availability: availability,
       cover_letter: cover,
-      resume_filename: filename
+      resume_filename: filename,
+      resumeBuffer: parsed.file.buffer,
+      resumeContentType: resumeMeta.contentType
     });
   } catch (err) {
     logApply('email-failed', inserted.id + ' ' + (err && err.message ? err.message : 'unknown'));

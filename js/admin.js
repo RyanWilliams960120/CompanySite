@@ -17,7 +17,7 @@
   function requireSession() {
     return api('/api/admin/session').then(function (result) {
       if (!result.ok) {
-        location.replace('/admin/login');
+        location.replace('/admin/login?next=' + encodeURIComponent(location.pathname + location.search));
         throw new Error('unauthorized');
       }
       document.body.classList.remove('ats-locked');
@@ -124,7 +124,7 @@
 
       api('/api/admin/applications?' + params.toString()).then(function (result) {
         if (result.status === 401) {
-          location.replace('/admin/login');
+          location.replace('/admin/login?next=' + encodeURIComponent(location.pathname + location.search));
           return;
         }
         if (!result.ok) {

@@ -8,10 +8,18 @@
   var statusEl = document.getElementById('loginStatus');
   var sending = false;
 
+  function adminNext() {
+    try {
+      var next = new URLSearchParams(location.search).get('next') || '';
+      if (next.indexOf('/admin') === 0 && next.indexOf('//') === -1) return next;
+    } catch (err) { /* ignore */ }
+    return '/admin/applications';
+  }
+
   fetch('/api/admin/session', { credentials: 'same-origin' })
     .then(function (res) { return res.json(); })
     .then(function (body) {
-      if (body && body.ok) location.replace('/admin/applications');
+      if (body && body.ok) location.replace(adminNext());
     })
     .catch(function () { /* stay on login */ });
 
@@ -46,7 +54,7 @@
       if (!result.ok) {
         throw new Error(result.error || 'Invalid username or password.');
       }
-      location.replace('/admin/applications');
+      location.replace(adminNext());
     }).catch(function (err) {
       sending = false;
       if (submitBtn) {

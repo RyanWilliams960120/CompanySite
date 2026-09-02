@@ -199,6 +199,7 @@ ul { list-style: none; }
 }
 
 .nav-book {
+  display: none !important;
   margin-left: 8px;
   padding: 9px 20px !important;
   font-family: inherit;

@@ -1,5 +1,5 @@
 const { json, fail, clientIp } = require('../../lib/http');
-const { authConfigured, credentialsMatch, createSessionCookie } = require('../../lib/auth');
+const { authConfigured, missingAuthEnv, credentialsMatch, createSessionCookie } = require('../../lib/auth');
 
 const hits = new Map();
 
@@ -43,7 +43,15 @@ module.exports = async function handler(req, res) {
     return;
   }
   if (!authConfigured()) {
-    fail(res, 'Recruiter access is not configured.', 503);
+    const missing = missingAuthEnv();
+    console.error('[admin-login] not-configured', missing.join(','));
+    fail(
+      res,
+      missing.length
+        ? 'Recruiter access is not configured. Missing Vercel env: ' + missing.join(', ') + '.'
+        : 'Recruiter access is not configured.',
+      503
+    );
     return;
   }
   if (rateLimited(clientIp(req))) {

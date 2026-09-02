@@ -1,8 +1,16 @@
 {
   "name": "dracoinlabs-site",
   "private": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev": "vercel dev",
+    "start": "vercel dev"
+  },
   "dependencies": {
+    "@supabase/supabase-js": "^2.57.4",
     "busboy": "^1.6.0",
-    "nodemailer": "^9.0.5"
+    "resend": "^4.8.0"
   }
 }

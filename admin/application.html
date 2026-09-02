@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Application | DracoinLabs Recruiting</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="icon" type="image/png" href="../assets/favicon.png" sizes="256x256">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="ats-locked">
+  <header class="header header--solid" id="header">
+    <nav class="nav container">
+      <a href="../index.html" class="logo">
+        <img class="logo-mark" src="../assets/logo-mark.svg" alt="" width="32" height="32">
+        <span class="logo-text"><span class="logo-name">DracoinLabs</span><span class="logo-tagline">Web3 Infrastructure</span></span>
+      </a>
+      <div class="ats-nav-actions">
+        <a href="/admin/applications">Applications</a>
+        <button type="button" class="btn btn-ghost btn-sm" data-admin-logout>Sign out</button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="ats-page ats-app">
+    <div class="container container--narrow">
+      <a href="/admin/applications" class="breadcrumb">&larr; All applications</a>
+      <p class="form-status" id="detailStatus" role="status" aria-live="polite"></p>
+      <article class="card ats-detail" id="atsDetail" hidden>
+        <div class="ats-detail-head">
+          <div>
+            <span class="section-label">Candidate</span>
+            <h1 class="section-title" id="detailName"></h1>
+            <p class="ats-detail-position" id="detailPosition"></p>
+          </div>
+          <span class="status-pill" id="detailStatusPill"></span>
+        </div>
+
+        <section class="ats-block">
+          <h2>Contact information</h2>
+          <dl class="ats-dl" id="detailContact"></dl>
+        </section>
+
+        <section class="ats-block">
+          <h2>Professional links</h2>
+          <dl class="ats-dl" id="detailLinks"></dl>
+        </section>
+
+        <section class="ats-block">
+          <h2>Experience, compensation, and availability</h2>
+          <dl class="ats-dl" id="detailWork"></dl>
+        </section>
+
+        <section class="ats-block">
+          <h2>Cover letter</h2>
+          <p class="ats-cover" id="detailCover"></p>
+        </section>
+
+        <section class="ats-block">
+          <h2>CV / resume</h2>
+          <p id="detailResumeMeta"></p>
+          <a class="btn btn-primary" id="detailResume" href="#">Download CV</a>
+        </section>
+
+        <section class="ats-block">
+          <h2>Application status</h2>
+          <p class="ats-meta" id="detailDates"></p>
+          <form class="ats-status-form" id="statusForm">
+            <label for="statusSelect">Status</label>
+            <div class="ats-status-row">
+              <select id="statusSelect" name="status"></select>
+              <button type="submit" class="btn btn-primary" id="statusSave">Update status</button>
+            </div>
+          </form>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <script src="../js/admin.js"></script>
+</body>
+</html>

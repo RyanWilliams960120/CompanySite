@@ -14,6 +14,26 @@
       "source": "/careers/apply/index.html",
       "destination": "/careers/apply",
       "permanent": true
+    },
+    {
+      "source": "/admin",
+      "destination": "/admin/applications",
+      "permanent": false
+    },
+    {
+      "source": "/admin/login.html",
+      "destination": "/admin/login",
+      "permanent": true
+    },
+    {
+      "source": "/admin/applications/index.html",
+      "destination": "/admin/applications",
+      "permanent": true
+    },
+    {
+      "source": "/admin/application.html",
+      "destination": "/admin/application",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -32,6 +52,46 @@
     {
       "source": "/careers/apply/",
       "destination": "/careers/apply/index.html"
+    },
+    {
+      "source": "/admin/login",
+      "destination": "/admin/login.html"
+    },
+    {
+      "source": "/admin/login/",
+      "destination": "/admin/login.html"
+    },
+    {
+      "source": "/admin/applications",
+      "destination": "/admin/applications/index.html"
+    },
+    {
+      "source": "/admin/applications/",
+      "destination": "/admin/applications/index.html"
+    },
+    {
+      "source": "/admin/application",
+      "destination": "/admin/application.html"
+    },
+    {
+      "source": "/admin/application/",
+      "destination": "/admin/application.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/admin/(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
+        { "key": "Cache-Control", "value": "no-store" }
+      ]
+    },
+    {
+      "source": "/api/admin/(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
+        { "key": "Cache-Control", "value": "no-store" }
+      ]
     }
   ]
 }

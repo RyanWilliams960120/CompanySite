@@ -4,5 +4,9 @@ Allow: /
 Disallow: /portfolio.html
 Disallow: /reviews.html
 Disallow: /ecosystem.html
+Disallow: /admin
+Disallow: /admin/
+Disallow: /api/admin
+Disallow: /api/admin/
 
 Sitemap: https://dracoinlabs.com/sitemap.xml

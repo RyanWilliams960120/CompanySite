@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Applications | DracoinLabs Recruiting</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="icon" type="image/png" href="../../assets/favicon.png" sizes="256x256">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body class="ats-locked">
+  <header class="header header--solid" id="header">
+    <nav class="nav container">
+      <a href="../../index.html" class="logo">
+        <img class="logo-mark" src="../../assets/logo-mark.svg" alt="" width="32" height="32">
+        <span class="logo-text"><span class="logo-name">DracoinLabs</span><span class="logo-tagline">Web3 Infrastructure</span></span>
+      </a>
+      <div class="ats-nav-actions">
+        <a href="/admin/applications" class="active">Applications</a>
+        <button type="button" class="btn btn-ghost btn-sm" data-admin-logout>Sign out</button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="ats-page ats-app">
+    <div class="container">
+      <div class="ats-heading">
+        <span class="section-label">Recruiting</span>
+        <h1 class="section-title">Applications</h1>
+        <p class="section-lead">Review candidates for the Dracoin Cross-Chain Staking Platform.</p>
+      </div>
+
+      <form class="ats-filters card" id="atsFilters">
+        <div class="form-group">
+          <label for="q">Search</label>
+          <input type="search" id="q" name="q" placeholder="Name, email, or phone" maxlength="120">
+        </div>
+        <div class="form-group">
+          <label for="position">Position</label>
+          <select id="position" name="position">
+            <option value="">All positions</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="status">Status</label>
+          <select id="status" name="status">
+            <option value="">All statuses</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="sort">Sort</label>
+          <select id="sort" name="sort">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+          </select>
+        </div>
+      </form>
+
+      <p class="form-status" id="atsStatus" role="status" aria-live="polite"></p>
+      <div class="card ats-table-wrap">
+        <table class="ats-table" id="atsTable">
+          <thead>
+            <tr>
+              <th>Candidate</th>
+              <th>Position</th>
+              <th>Date</th>
+              <th>Experience</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="atsBody"></tbody>
+        </table>
+        <p class="ats-empty" id="atsEmpty" hidden>No applications match these filters.</p>
+      </div>
+    </div>
+  </main>
+
+  <script src="../../js/admin.js"></script>
+</body>
+</html>

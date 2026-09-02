@@ -193,7 +193,7 @@
     submitting = true;
     if (submitBtn) {
       submitBtn.disabled = true;
-      submitBtn.textContent = 'Submitting Application...';
+      submitBtn.textContent = 'Submitting...';
       submitBtn.classList.add('loading');
     }
     if (statusEl) {
@@ -211,22 +211,32 @@
       credentials: 'same-origin'
     }).then(function (res) {
       return res.json().then(function (body) {
-        return { ok: res.ok && body && body.ok, status: res.status };
+        return {
+          ok: res.ok && body && body.ok,
+          status: res.status,
+          error: body && body.error
+        };
       }).catch(function () {
         return { ok: false, status: res.status };
       });
     }).then(function (result) {
       if (!result.ok) {
-        throw new Error('submit-failed');
+        var message = result.error || 'Unable to submit your application right now. Please try again.';
+        if (result.status === 429) {
+          message = result.error || 'Too many applications from this network. Please try again later.';
+        }
+        throw new Error(message);
       }
-      if (form) form.hidden = true;
+      form.reset();
+      if (started) started.value = String(Date.now());
+      form.hidden = true;
       if (successEl) {
         successEl.hidden = false;
         successEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
-    }).catch(function () {
+    }).catch(function (err) {
       if (statusEl) {
-        statusEl.textContent = 'Unable to submit your application right now. Please try again.';
+        statusEl.textContent = err.message || 'Unable to submit your application right now. Please try again.';
         statusEl.className = 'form-status error';
       }
       submitting = false;

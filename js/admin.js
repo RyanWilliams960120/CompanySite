@@ -243,7 +243,7 @@
 
     api('/api/admin/applications?id=' + encodeURIComponent(id)).then(function (result) {
       if (result.status === 401) {
-        location.replace('/admin/login');
+        location.replace('/admin/login?next=' + encodeURIComponent(location.pathname + location.search));
         return;
       }
       if (!result.ok || !result.body.application) {
@@ -268,7 +268,7 @@
           body: JSON.stringify({ id: id, status: statusSelect.value })
         }).then(function (result) {
           if (result.status === 401) {
-            location.replace('/admin/login');
+            location.replace('/admin/login?next=' + encodeURIComponent(location.pathname + location.search));
             return;
           }
           if (!result.ok || !result.body.application) {

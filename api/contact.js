@@ -99,7 +99,7 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  if (oneLine(body.website, 200)) {
+  if (oneLine(body.dl_hp, 200) || oneLine(body.website, 200)) {
     json(res, 200, { ok: true });
     return;
   }

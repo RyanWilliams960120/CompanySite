@@ -2,7 +2,7 @@
 
 Marketing site for [DracoinLabs](https://www.dracoinlabs.com), plus a private recruiting workflow for the Careers page.
 
-Candidates apply at `/careers` and `/careers/apply`. Applications are validated by `/api/apply`, stored in the Vercel Neon Postgres database, and emailed to recruiting with Resend. Recruiters review applications at `/admin/applications`.
+Candidates apply at `/careers` and `/careers/apply`. Applications are validated by `/api/apply`, stored in the Vercel Neon Postgres database, and emailed to recruiting through Hostinger SMTP or Resend. Recruiters review applications at `/admin/applications`.
 
 Do not put secrets in this repository. Use environment variables only.
 
@@ -25,17 +25,32 @@ The table stores candidate fields plus the CV as `resume_bytes` (private, not a 
 
 CVs are stored in Postgres (`resume_bytes`), not in a public bucket. Recruiters download them only through `/api/admin/resume` after signing in.
 
-## 4. Configure Resend
+## 4. Configure recruiting email (Hostinger or Resend)
+
+The candidate still sees success if the database record was saved, even when email delivery fails. Check Vercel function logs for `[careers-apply] email-failed`.
+
+### Hostinger mailbox (recommended for info@dracoinlabs.com)
+
+In Vercel → **Settings → Environment Variables**, add:
+
+```
+CAREERS_EMAIL=info@dracoinlabs.com
+EMAIL_HOST=smtp.hostinger.com
+EMAIL_PORT=465
+EMAIL_USER=info@dracoinlabs.com
+EMAIL_PASSWORD=
+EMAIL_FROM=DracoinLabs Careers <info@dracoinlabs.com>
+```
+
+`EMAIL_PASSWORD` is the Hostinger mailbox password for `info@dracoinlabs.com`. Redeploy after saving. If port 465 fails, try `EMAIL_PORT=587`.
+
+### Resend (optional)
+
+If Hostinger SMTP is not set, the API can use Resend instead:
 
 1. Create an account at [https://resend.com](https://resend.com).
-2. Verify the sending domain (for example `dracoinlabs.com`).
-3. Create an API key (`RESEND_API_KEY`).
-4. Set `RESEND_FROM` to a verified sender, for example `DracoinLabs Careers <careers@dracoinlabs.com>`.
-5. Set `CAREERS_EMAIL` to the recruiting inbox that should receive new-application notices.
-
-Until the domain is verified, Resend may only deliver to the Resend account email.
-
-The candidate still sees success if the database record was saved, even when email delivery fails. Check Vercel function logs for `[careers-apply] email-failed` and retry manually from the dashboard if needed.
+2. Verify `dracoinlabs.com`.
+3. Set `RESEND_API_KEY`, `RESEND_FROM`, and `CAREERS_EMAIL`.
 
 The API also rejects a second application from the same email address for the same position within 24 hours.
 
@@ -46,9 +61,14 @@ Copy `.env.example` to `.env` for local development. `.env` is gitignored.
 ```
 DATABASE_URL=
 POSTGRES_URL=
+CAREERS_EMAIL=
+EMAIL_HOST=
+EMAIL_PORT=465
+EMAIL_USER=
+EMAIL_PASSWORD=
+EMAIL_FROM=
 RESEND_API_KEY=
 RESEND_FROM=
-CAREERS_EMAIL=
 APP_BASE_URL=
 ADMIN_USERNAME=
 ADMIN_PASSWORD=
@@ -60,9 +80,14 @@ ALLOWED_ORIGIN=
 | --- | --- |
 | `DATABASE_URL` | Neon connection string (usually injected by the Vercel Neon integration) |
 | `POSTGRES_URL` | Alternate Neon URL if `DATABASE_URL` is not set |
-| `RESEND_API_KEY` | Resend API key |
-| `RESEND_FROM` | Verified From address |
-| `CAREERS_EMAIL` | Recruiting inbox |
+| `CAREERS_EMAIL` | Recruiting inbox, e.g. `info@dracoinlabs.com` |
+| `EMAIL_HOST` | Hostinger SMTP host, `smtp.hostinger.com` |
+| `EMAIL_PORT` | `465` (SSL) or `587` (TLS) |
+| `EMAIL_USER` | Mailbox username, e.g. `info@dracoinlabs.com` |
+| `EMAIL_PASSWORD` | Mailbox password |
+| `EMAIL_FROM` | From header, e.g. `DracoinLabs Careers <info@dracoinlabs.com>` |
+| `RESEND_API_KEY` | Optional Resend API key if not using SMTP |
+| `RESEND_FROM` | Optional Resend From address |
 | `APP_BASE_URL` | Public site origin, no trailing slash. Optional on Vercel (production URL is used if unset) |
 | `ADMIN_USERNAME` | Recruiter dashboard username |
 | `ADMIN_PASSWORD` | Recruiter dashboard password |
@@ -74,9 +99,10 @@ ALLOWED_ORIGIN=
 ## 6. Configure those variables in Vercel
 
 1. Confirm the Neon integration already added `DATABASE_URL` or `POSTGRES_URL`.
-2. Add Resend and admin variables under **Settings → Environment Variables** if you want notifications and `/admin/applications`.
-3. Do not expose `DATABASE_URL`, `RESEND_API_KEY`, `ADMIN_PASSWORD`, or `ADMIN_SESSION_SECRET` in browser JavaScript.
-4. Redeploy after saving variables.
+2. Add Hostinger SMTP variables so applications reach `info@dracoinlabs.com`.
+3. Add admin variables if you want `/admin/applications`.
+4. Do not expose `DATABASE_URL`, `EMAIL_PASSWORD`, `RESEND_API_KEY`, `ADMIN_PASSWORD`, or `ADMIN_SESSION_SECRET` in browser JavaScript.
+5. Redeploy after saving variables.
 
 ## 7. Run locally
 

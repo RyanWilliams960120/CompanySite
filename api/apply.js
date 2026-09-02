@@ -287,7 +287,7 @@ async function handler(req, res) {
       resume_filename: filename
     });
   } catch (err) {
-    logApply('email-failed', inserted.id);
+    logApply('email-failed', inserted.id + ' ' + (err && err.message ? err.message : 'unknown'));
   }
 
   json(res, 200, { ok: true });

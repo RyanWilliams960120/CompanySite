@@ -16,6 +16,21 @@
       "permanent": true
     },
     {
+      "source": "/apply",
+      "destination": "/careers/apply",
+      "permanent": true
+    },
+    {
+      "source": "/apply/",
+      "destination": "/careers/apply",
+      "permanent": true
+    },
+    {
+      "source": "/apply/index.html",
+      "destination": "/careers/apply",
+      "permanent": true
+    },
+    {
       "source": "/admin",
       "destination": "/admin/applications",
       "permanent": false

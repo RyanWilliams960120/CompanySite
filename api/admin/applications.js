@@ -1,6 +1,7 @@
 const { json, fail, isUuid } = require('../../lib/http');
 const { requireAdmin } = require('../../lib/auth');
-const { getServiceClient } = require('../../lib/supabase');
+const { getSql, query } = require('../../lib/db');
+const { ensureSchema } = require('../../lib/schema');
 const { POSITION_TITLES, STATUSES } = require('../../lib/positions');
 const { oneLine, escapeIlike } = require('../../lib/validate');
 
@@ -57,7 +58,7 @@ function readBody(req) {
   });
 }
 
-async function listApplications(req, res, supabase) {
+async function listApplications(req, res, sql) {
   const q = oneLine(queryValue(req, 'q'), 120).replace(/[,()]/g, ' ').trim();
   const position = oneLine(queryValue(req, 'position'), 120);
   const status = oneLine(queryValue(req, 'status'), 40).toLowerCase();
@@ -72,17 +73,32 @@ async function listApplications(req, res, supabase) {
     return;
   }
 
-  let query = supabase.from('applications').select(LIST_COLUMNS);
-  if (status) query = query.eq('status', status);
-  if (position) query = query.eq('position', position);
-  if (q) {
-    const term = '%' + escapeIlike(q) + '%';
-    query = query.or('name.ilike.' + term + ',email.ilike.' + term + ',phone.ilike.' + term);
+  const clauses = [];
+  const values = [];
+  let i = 1;
+  if (status) {
+    clauses.push('status = $' + i++);
+    values.push(status);
   }
-  query = query.order('created_at', { ascending: sort === 'oldest' }).limit(200);
+  if (position) {
+    clauses.push('position = $' + i++);
+    values.push(position);
+  }
+  if (q) {
+    clauses.push('(name ILIKE $' + i + ' OR email ILIKE $' + i + ' OR COALESCE(phone, \'\') ILIKE $' + i + ')');
+    values.push('%' + escapeIlike(q) + '%');
+    i += 1;
+  }
 
-  const { data, error } = await query;
-  if (error) {
+  const where = clauses.length ? ' WHERE ' + clauses.join(' AND ') : '';
+  const order = sort === 'oldest' ? 'ASC' : 'DESC';
+  const text = 'SELECT ' + LIST_COLUMNS + ' FROM applications' + where +
+    ' ORDER BY created_at ' + order + ' LIMIT 200';
+
+  let rows;
+  try {
+    rows = await query(sql, text, values);
+  } catch (err) {
     console.error('[admin-applications] list-failed');
     fail(res, 'Unable to load applications.', 500);
     return;
@@ -90,32 +106,29 @@ async function listApplications(req, res, supabase) {
 
   json(res, 200, {
     ok: true,
-    applications: data || [],
+    applications: rows || [],
     positions: POSITION_TITLES,
     statuses: STATUSES
   });
 }
 
-async function getApplication(req, res, supabase, id) {
-  const { data, error } = await supabase
-    .from('applications')
-    .select(DETAIL_COLUMNS)
-    .eq('id', id)
-    .maybeSingle();
-
-  if (error) {
+async function getApplication(req, res, sql, id) {
+  let rows;
+  try {
+    rows = await query(sql, 'SELECT ' + DETAIL_COLUMNS + ' FROM applications WHERE id = $1 LIMIT 1', [id]);
+  } catch (err) {
     console.error('[admin-applications] detail-failed');
     fail(res, 'Unable to load application.', 500);
     return;
   }
-  if (!data) {
+  if (!rows || !rows.length) {
     fail(res, 'Application not found.', 404);
     return;
   }
-  json(res, 200, { ok: true, application: data, statuses: STATUSES });
+  json(res, 200, { ok: true, application: rows[0], statuses: STATUSES });
 }
 
-async function updateStatus(req, res, supabase) {
+async function updateStatus(req, res, sql) {
   let body;
   try {
     body = await readBody(req);
@@ -131,32 +144,39 @@ async function updateStatus(req, res, supabase) {
     return;
   }
 
-  const { data, error } = await supabase
-    .from('applications')
-    .update({ status: status })
-    .eq('id', id)
-    .select(DETAIL_COLUMNS)
-    .maybeSingle();
-
-  if (error) {
+  let rows;
+  try {
+    rows = await query(
+      sql,
+      'UPDATE applications SET status = $1, updated_at = now() WHERE id = $2 RETURNING ' + DETAIL_COLUMNS,
+      [status, id]
+    );
+  } catch (err) {
     console.error('[admin-applications] status-failed');
     fail(res, 'Unable to update status.', 500);
     return;
   }
-  if (!data) {
+  if (!rows || !rows.length) {
     fail(res, 'Application not found.', 404);
     return;
   }
-  json(res, 200, { ok: true, application: data });
+  json(res, 200, { ok: true, application: rows[0] });
 }
 
 module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   if (!requireAdmin(req, res)) return;
 
-  const supabase = getServiceClient();
-  if (!supabase) {
+  const sql = getSql();
+  if (!sql) {
     fail(res, 'Application storage is not configured.', 503);
+    return;
+  }
+
+  try {
+    await ensureSchema(sql);
+  } catch (err) {
+    fail(res, 'Unable to load applications.', 500);
     return;
   }
 
@@ -167,15 +187,15 @@ module.exports = async function handler(req, res) {
         fail(res, 'Application not found.', 404);
         return;
       }
-      await getApplication(req, res, supabase, id);
+      await getApplication(req, res, sql, id);
       return;
     }
-    await listApplications(req, res, supabase);
+    await listApplications(req, res, sql);
     return;
   }
 
   if (req.method === 'PATCH') {
-    await updateStatus(req, res, supabase);
+    await updateStatus(req, res, sql);
     return;
   }
 

@@ -1,6 +1,7 @@
 const { fail, isUuid } = require('../../lib/http');
 const { requireAdmin } = require('../../lib/auth');
-const { getServiceClient, storageBucket } = require('../../lib/supabase');
+const { getSql, asBuffer } = require('../../lib/db');
+const { ensureSchema } = require('../../lib/schema');
 const { oneLine } = require('../../lib/validate');
 const { contentDisposition } = require('../../lib/resume');
 
@@ -27,39 +28,40 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  const supabase = getServiceClient();
-  if (!supabase) {
+  const sql = getSql();
+  if (!sql) {
     fail(res, 'Application storage is not configured.', 503);
     return;
   }
 
-  const { data, error } = await supabase
-    .from('applications')
-    .select('id, resume_filename, resume_content_type, resume_storage_path')
-    .eq('id', id)
-    .maybeSingle();
+  try {
+    await ensureSchema(sql);
+  } catch (err) {
+    fail(res, 'Unable to download resume.', 500);
+    return;
+  }
 
-  if (error) {
+  let rows;
+  try {
+    rows = await sql`
+      SELECT resume_filename, resume_content_type, resume_bytes
+      FROM applications
+      WHERE id = ${id}
+      LIMIT 1
+    `;
+  } catch (err) {
     console.error('[admin-resume] lookup-failed');
     fail(res, 'Unable to download resume.', 500);
     return;
   }
-  if (!data || !data.resume_storage_path) {
+
+  const data = rows && rows[0];
+  const buffer = data ? asBuffer(data.resume_bytes) : null;
+  if (!data || !buffer || !buffer.length) {
     fail(res, 'Application not found.', 404);
     return;
   }
 
-  const { data: file, error: downloadErr } = await supabase.storage
-    .from(storageBucket())
-    .download(data.resume_storage_path);
-
-  if (downloadErr || !file) {
-    console.error('[admin-resume] download-failed');
-    fail(res, 'Unable to download resume.', 500);
-    return;
-  }
-
-  const buffer = Buffer.from(await file.arrayBuffer());
   res.statusCode = 200;
   res.setHeader('Content-Type', data.resume_content_type || 'application/octet-stream');
   res.setHeader('Content-Disposition', contentDisposition(data.resume_filename || 'resume.pdf'));

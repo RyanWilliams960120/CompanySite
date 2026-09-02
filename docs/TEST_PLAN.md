@@ -55,15 +55,15 @@ Click **Submit Application** twice quickly on a valid form. Expect the button to
 
 ### Database failure
 
-Temporarily point `SUPABASE_URL` at an invalid host, or rename the table. Submit a valid application. Expect a generic failure message (not the success panel). If a Storage object was created, it should be deleted.
+Temporarily point `DATABASE_URL` at an invalid host, or rename the table. Submit a valid application. Expect a generic failure message (not the success panel). No application row should remain.
 
 ### Storage failure
 
-Use a wrong `SUPABASE_STORAGE_BUCKET` name. Expect a generic failure message and no `applications` row.
+The CV is stored in the same Postgres row as `resume_bytes`. A database insert failure is also a CV storage failure: expect a generic error and no saved application.
 
 ### Email failure
 
-Set an invalid `RESEND_API_KEY` or `RESEND_FROM` while Supabase is correct. Submit a valid application. Expect the success panel and a saved database row. Expect `[careers-apply] email-failed {application id}` in function logs. Do not delete the application.
+Set an invalid `RESEND_API_KEY` or `RESEND_FROM` while the database is connected. Submit a valid application. Expect the success panel and a saved database row. Expect `[careers-apply] email-failed {application id}` in function logs. Do not delete the application.
 
 ## Recruiter dashboard and isolation
 
@@ -82,7 +82,7 @@ Using a known application UUID from a previous test:
 1. Without the recruiter cookie, request `/api/admin/resume?id={uuid}`.
 2. Expect `401`/`404` JSON, not the CV.
 3. Request `/api/admin/applications?id={uuid}` without the cookie. Expect `401`.
-4. Confirm the Storage object URL is not public (opening the raw Supabase object URL without the service role should fail).
+4. Confirm there is no public CV URL. The file exists only as `resume_bytes` in Postgres and is served through the authenticated admin API.
 
 ### Authorized recruiter flow
 

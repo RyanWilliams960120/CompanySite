@@ -3,7 +3,8 @@ const crypto = require('crypto');
 const { json, fail, clientIp } = require('../lib/http');
 const { officialTitle, EMPLOYMENT_TYPES } = require('../lib/positions');
 const { oneLine, multiline, isHttpUrl, isEmail } = require('../lib/validate');
-const { getServiceClient, storageBucket } = require('../lib/supabase');
+const { getSql } = require('../lib/db');
+const { ensureSchema } = require('../lib/schema');
 const { MAX_RESUME_BYTES, detectResume, safeResumeName } = require('../lib/resume');
 const { notifyRecruiters } = require('../lib/email');
 
@@ -82,15 +83,6 @@ function logApply(event, detail) {
   console.error('[careers-apply] ' + event + extra);
 }
 
-async function removeStoredResume(supabase, bucket, path) {
-  if (!supabase || !path) return;
-  try {
-    await supabase.storage.from(bucket).remove([path]);
-  } catch (err) {
-    logApply('storage-cleanup-failed');
-  }
-}
-
 async function handler(req, res) {
   const origin = req.headers.origin;
   if (origin && allowedOrigin(origin)) {
@@ -118,10 +110,9 @@ async function handler(req, res) {
     return;
   }
 
-  const supabase = getServiceClient();
-  const bucket = storageBucket();
-  if (!supabase) {
-    logApply('missing-supabase-env');
+  const sql = getSql();
+  if (!sql) {
+    logApply('missing-database-env');
     fail(res, GENERIC_ERROR, 503);
     return;
   }
@@ -213,17 +204,27 @@ async function handler(req, res) {
     return;
   }
 
-  const since = new Date(Date.now() - DUPLICATE_WINDOW_MS).toISOString();
-  const { data: existing, error: dupErr } = await supabase
-    .from('applications')
-    .select('id')
-    .eq('email', email)
-    .eq('position', title)
-    .gte('created_at', since)
-    .limit(1);
+  try {
+    await ensureSchema(sql);
+  } catch (err) {
+    logApply('schema-failed', err && err.message ? err.message : err);
+    fail(res, GENERIC_ERROR, 500);
+    return;
+  }
 
-  if (dupErr) {
-    logApply('duplicate-check-failed');
+  const since = new Date(Date.now() - DUPLICATE_WINDOW_MS).toISOString();
+  let existing;
+  try {
+    existing = await sql`
+      SELECT id
+      FROM applications
+      WHERE lower(email) = ${email}
+        AND position = ${title}
+        AND created_at >= ${since}::timestamptz
+      LIMIT 1
+    `;
+  } catch (err) {
+    logApply('duplicate-check-failed', err && err.message ? err.message : err);
     fail(res, GENERIC_ERROR, 500);
     return;
   }
@@ -235,49 +236,33 @@ async function handler(req, res) {
   const id = crypto.randomUUID();
   const filename = safeResumeName(parsed.file.filename, resumeMeta.extension);
   const storagePath = id + '/' + filename;
+  const resumeBytes = new Uint8Array(parsed.file.buffer);
 
-  const { error: uploadErr } = await supabase.storage.from(bucket).upload(storagePath, parsed.file.buffer, {
-    contentType: resumeMeta.contentType,
-    upsert: false
-  });
-
-  if (uploadErr) {
-    logApply('storage-upload-failed');
+  let inserted;
+  try {
+    const rows = await sql`
+      INSERT INTO applications (
+        id, position, name, email, phone, location, linkedin, github, portfolio,
+        experience_years, employment_type, compensation, availability, cover_letter,
+        resume_filename, resume_content_type, resume_size, resume_storage_path, resume_bytes, status
+      ) VALUES (
+        ${id}, ${title}, ${name}, ${email}, ${phone || null}, ${location || null},
+        ${linkedin}, ${github || null}, ${portfolio || null}, ${Number(experience)},
+        ${engagement || null}, ${compensation || null}, ${availability || null}, ${cover || null},
+        ${filename}, ${resumeMeta.contentType}, ${parsed.file.buffer.length}, ${storagePath},
+        ${resumeBytes}, ${'new'}
+      )
+      RETURNING id, created_at
+    `;
+    inserted = rows && rows[0];
+  } catch (err) {
+    logApply('database-insert-failed', err && err.message ? err.message : err);
     fail(res, GENERIC_ERROR, 500);
     return;
   }
 
-  const record = {
-    id: id,
-    position: title,
-    name: name,
-    email: email,
-    phone: phone || null,
-    location: location || null,
-    linkedin: linkedin,
-    github: github || null,
-    portfolio: portfolio || null,
-    experience_years: Number(experience),
-    employment_type: engagement || null,
-    compensation: compensation || null,
-    availability: availability || null,
-    cover_letter: cover || null,
-    resume_filename: filename,
-    resume_content_type: resumeMeta.contentType,
-    resume_size: parsed.file.buffer.length,
-    resume_storage_path: storagePath,
-    status: 'new'
-  };
-
-  const { data: inserted, error: insertErr } = await supabase
-    .from('applications')
-    .insert(record)
-    .select('id, created_at')
-    .single();
-
-  if (insertErr) {
-    logApply('database-insert-failed');
-    await removeStoredResume(supabase, bucket, storagePath);
+  if (!inserted || !inserted.id) {
+    logApply('database-insert-failed', 'empty-result');
     fail(res, GENERIC_ERROR, 500);
     return;
   }

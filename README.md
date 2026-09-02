@@ -2,41 +2,28 @@
 
 Marketing site for [DracoinLabs](https://www.dracoinlabs.com), plus a private recruiting workflow for the Careers page.
 
-Candidates apply at `/careers` and `/careers/apply`. Applications are validated by `/api/apply`, stored in Supabase (PostgreSQL + private Storage), and emailed to recruiting with Resend. Recruiters review applications at `/admin/applications`.
+Candidates apply at `/careers` and `/careers/apply`. Applications are validated by `/api/apply`, stored in the Vercel Neon Postgres database, and emailed to recruiting with Resend. Recruiters review applications at `/admin/applications`.
 
 Do not put secrets in this repository. Use environment variables only.
 
-## 1. Create the Supabase project
+## 1. Create the Neon database on Vercel
 
-1. Sign in at [https://supabase.com](https://supabase.com) and create a project.
-2. Open **Project Settings → API**.
-3. Copy the project URL (`SUPABASE_URL`) and the **service role** key (`SUPABASE_SERVICE_ROLE_KEY`).
-4. Never put the service role key in HTML, `js/`, or any other browser-side file. It bypasses Row Level Security.
+1. In the Vercel project, open **Storage** (or **Integrations**) and create a **Neon** database.
+2. Connect it to the `companysite` project for Production (and Preview if you use preview deploys).
+3. Vercel will inject `DATABASE_URL` and/or `POSTGRES_URL`. You do not paste the password into the website code.
+4. Redeploy after connecting the database so serverless functions receive the URL.
 
-## 2. Create the PostgreSQL table
+The apply API creates the `applications` table automatically on the first successful submit.
 
-In the Supabase SQL Editor, run `supabase/migrations/001_applications.sql`.
+## 2. PostgreSQL table
 
-That script creates `public.applications` with a UUID primary key, default status `new`, recruiter search indexes, Row Level Security (no public policies), and an optional private Storage bucket named `resumes`.
+Optional: run `supabase/migrations/001_applications.sql` in the Neon SQL Editor if you want the table before the first application.
 
-If the `storage.buckets` insert fails, create the bucket in the Dashboard instead (step 3). The table and indexes are still valid.
+The table stores candidate fields plus the CV as `resume_bytes` (private, not a public file URL). Default status is `new`.
 
-## 3. Create the private `resumes` storage bucket
+## 3. CV storage
 
-If the SQL did not create it:
-
-1. Open **Storage → New bucket**.
-2. Name: `resumes`
-3. Public bucket: **off**
-4. File size limit: `2 MB` (2097152 bytes)
-5. Allowed MIME types (optional extra guard):
-   - `application/pdf`
-   - `application/msword`
-   - `application/vnd.openxmlformats-officedocument.wordprocessingml.document`
-
-Do not add Storage policies that allow `anon` or `authenticated` to read or write this bucket. The API uses the service role key on the server.
-
-CVs are stored as `{application_id}/{safe_filename}` inside the `resumes` bucket.
+CVs are stored in Postgres (`resume_bytes`), not in a public bucket. Recruiters download them only through `/api/admin/resume` after signing in.
 
 ## 4. Configure Resend
 
@@ -57,9 +44,8 @@ The API also rejects a second application from the same email address for the sa
 Copy `.env.example` to `.env` for local development. `.env` is gitignored.
 
 ```
-SUPABASE_URL=
-SUPABASE_SERVICE_ROLE_KEY=
-SUPABASE_STORAGE_BUCKET=resumes
+DATABASE_URL=
+POSTGRES_URL=
 RESEND_API_KEY=
 RESEND_FROM=
 CAREERS_EMAIL=
@@ -72,26 +58,25 @@ ALLOWED_ORIGIN=
 
 | Variable | Purpose |
 | --- | --- |
-| `SUPABASE_URL` | Supabase project URL |
-| `SUPABASE_SERVICE_ROLE_KEY` | Server-only key used by Vercel functions |
-| `SUPABASE_STORAGE_BUCKET` | Private bucket name (`resumes`) |
+| `DATABASE_URL` | Neon connection string (usually injected by the Vercel Neon integration) |
+| `POSTGRES_URL` | Alternate Neon URL if `DATABASE_URL` is not set |
 | `RESEND_API_KEY` | Resend API key |
 | `RESEND_FROM` | Verified From address |
 | `CAREERS_EMAIL` | Recruiting inbox |
-| `APP_BASE_URL` | Public site origin, no trailing slash, e.g. `https://www.dracoinlabs.com` |
+| `APP_BASE_URL` | Public site origin, no trailing slash. Optional on Vercel (production URL is used if unset) |
 | `ADMIN_USERNAME` | Recruiter dashboard username |
 | `ADMIN_PASSWORD` | Recruiter dashboard password |
 | `ADMIN_SESSION_SECRET` | Long random string used to sign the HttpOnly session cookie (32+ characters) |
 | `ALLOWED_ORIGIN` | Optional extra CORS origin(s), comma-separated |
 
-SMTP variables (`EMAIL_HOST`, `EMAIL_USER`, `EMAIL_PASSWORD`) are no longer used.
+`DATABASE_URL` / `POSTGRES_URL` are required for **Submit Application**. Resend and admin variables are required for email and the recruiter dashboard, not for saving the application.
 
 ## 6. Configure those variables in Vercel
 
-1. Open the Vercel project → **Settings → Environment Variables**.
-2. Add every variable from the table above for Production (and Preview if you test preview deploys).
-3. Do not expose `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY`, `ADMIN_PASSWORD`, or `ADMIN_SESSION_SECRET` with a `NEXT_PUBLIC_` / `VITE_` prefix, and do not reference them from `js/`.
-4. Redeploy after saving variables so serverless functions receive them.
+1. Confirm the Neon integration already added `DATABASE_URL` or `POSTGRES_URL`.
+2. Add Resend and admin variables under **Settings → Environment Variables** if you want notifications and `/admin/applications`.
+3. Do not expose `DATABASE_URL`, `RESEND_API_KEY`, `ADMIN_PASSWORD`, or `ADMIN_SESSION_SECRET` in browser JavaScript.
+4. Redeploy after saving variables.
 
 ## 7. Run locally
 
@@ -103,7 +88,7 @@ npx vercel login
 copy .env.example .env
 ```
 
-Fill `.env` with real values, then:
+Pull env from Vercel with `npx vercel env pull .env`, or paste `DATABASE_URL` from the Neon store, then:
 
 ```bash
 npx vercel dev
@@ -118,10 +103,9 @@ The apply form and recruiter dashboard need the API, so `file://` browsing will 
 1. Open `/careers/apply?position=senior-solana-rust-engineer`.
 2. Complete required fields and attach a PDF/DOC/DOCX resume of 2 MB or less.
 3. Submit. The button should show **Submitting...** and then **Application Submitted Successfully**.
-4. Confirm a row in Supabase **Table Editor → applications**.
-5. Confirm a file under **Storage → resumes → {application id}/**.
-6. Confirm the recruiting inbox received **New DracoinLabs Application — {position} — {name}**.
-7. Sign in at `/admin/login` and open the application. Download the CV.
+4. Confirm a row in the Neon table `applications`.
+5. Confirm the recruiting inbox received **New DracoinLabs Application — {position} — {name}** if Resend is configured.
+6. Sign in at `/admin/login` and open the application. Download the CV.
 
 See `docs/TEST_PLAN.md` for invalid input, failure, and security cases.
 
@@ -142,12 +126,12 @@ npm install
 npx vercel --prod
 ```
 
-Or push to the GitHub repository connected to the Vercel project. After the first deploy:
+Or push to the GitHub repository connected to the Vercel project. After deploy:
 
-1. Confirm environment variables are set (step 6).
+1. Confirm Neon is connected and `DATABASE_URL` is present.
 2. Confirm `/careers` and `/careers/apply` load.
 3. Submit a test application.
-4. Sign in to `/admin/applications`.
+4. Sign in to `/admin/applications` if admin env vars are set.
 
 Production routing:
 

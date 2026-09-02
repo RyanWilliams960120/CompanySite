@@ -9,7 +9,7 @@
     "start": "vercel dev"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.57.4",
+    "@neondatabase/serverless": "^1.1.0",
     "busboy": "^1.6.0",
     "resend": "^4.8.0"
   }

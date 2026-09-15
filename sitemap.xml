@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://dracoinlabs.com/</loc>
+    <loc>https://www.dracoinlabs.org/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://dracoinlabs.com/about.html</loc>
+    <loc>https://www.dracoinlabs.org/about.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://dracoinlabs.com/technology.html</loc>
+    <loc>https://www.dracoinlabs.org/technology.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://dracoinlabs.com/solutions.html</loc>
+    <loc>https://www.dracoinlabs.org/solutions.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.dracoinlabs.com/careers</loc>
+    <loc>https://www.dracoinlabs.org/careers</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://dracoinlabs.com/careers/senior-solana-blockchain-engineer.html</loc>
+    <loc>https://www.dracoinlabs.org/careers/senior-solana-blockchain-engineer.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://dracoinlabs.com/careers/blockchain-developer-real-estate.html</loc>
+    <loc>https://www.dracoinlabs.org/careers/blockchain-developer-real-estate.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>

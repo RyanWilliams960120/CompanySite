@@ -54,7 +54,7 @@
     if (heroLead) heroLead.textContent = 'Applying for: ' + job.title;
     if (positionSelect) positionSelect.value = job.slug;
     if (positionSelectGroup) positionSelectGroup.hidden = true;
-    document.title = 'Apply — ' + job.title + ' | DracoinLabs';
+    document.title = 'Apply — ' + job.title + ' | Dracoin Labs';
   }
 
   function populateSelect() {

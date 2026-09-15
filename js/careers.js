@@ -252,18 +252,18 @@
         employmentType: ['FULL_TIME', 'CONTRACTOR'],
         hiringOrganization: {
           '@type': 'Organization',
-          name: 'DracoinLabs',
-          sameAs: 'https://www.dracoinlabs.com',
-          logo: 'https://dracoinlabs.com/assets/logo-mark.png'
+          name: 'Dracoin Labs',
+          sameAs: 'https://www.dracoinlabs.org',
+          logo: 'https://www.dracoinlabs.org/assets/logo-mark.png'
         },
         jobLocationType: 'TELECOMMUTE',
         applicantLocationRequirements: { '@type': 'Country', name: 'Worldwide' },
         identifier: {
           '@type': 'PropertyValue',
-          name: 'DracoinLabs',
+          name: 'Dracoin Labs',
           value: job.id
         },
-        url: 'https://www.dracoinlabs.com/careers#' + job.id,
+        url: 'https://www.dracoinlabs.org/careers#' + job.id,
         industry: 'Blockchain / Web3 / DeFi',
         occupationalCategory: job.department,
         skills: job.techDisplay.join(', '),

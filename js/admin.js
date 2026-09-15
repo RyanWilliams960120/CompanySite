@@ -203,7 +203,7 @@
 
     function render(app, statuses) {
       article.hidden = false;
-      document.title = app.name + ' | DracoinLabs Recruiting';
+      document.title = app.name + ' | Dracoin Labs Recruiting';
       document.getElementById('detailName').textContent = app.name;
       document.getElementById('detailPosition').textContent = app.position;
       var pill = document.getElementById('detailStatusPill');

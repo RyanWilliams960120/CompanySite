@@ -9,4 +9,4 @@ Disallow: /admin/
 Disallow: /api/admin
 Disallow: /api/admin/
 
-Sitemap: https://dracoinlabs.com/sitemap.xml
+Sitemap: https://www.dracoinlabs.org/sitemap.xml

@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 48" fill="none" role="img" aria-label="DracoinLabs">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 48" fill="none" role="img" aria-label="Dracoin Labs">
   <defs>
     <linearGradient id="logo-bg" x1="4" y1="2" x2="32" y2="34" gradientUnits="userSpaceOnUse">
       <stop stop-color="#1A6BFF"/>
@@ -21,6 +21,6 @@
     <circle cx="9.2" cy="10.2" r="1.1" fill="#fff" fill-opacity="0.85"/>
     <circle cx="18" cy="27.8" r="1.1" fill="#fff" fill-opacity="0.85"/>
   </g>
-  <text x="58" y="22" font-family="Inter, Segoe UI, system-ui, sans-serif" font-size="18" font-weight="600" fill="#09111F" letter-spacing="-0.4">DracoinLabs</text>
+  <text x="58" y="22" font-family="Inter, Segoe UI, system-ui, sans-serif" font-size="18" font-weight="600" fill="#09111F" letter-spacing="-0.4">Dracoin Labs</text>
   <text x="58" y="38" font-family="Inter, Segoe UI, system-ui, sans-serif" font-size="10" font-weight="500" fill="#8B97A8" letter-spacing="0.8">WEB3 INFRASTRUCTURE</text>
 </svg>

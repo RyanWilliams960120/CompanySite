@@ -83,26 +83,37 @@
     });
   }
 
+  function formField(form, name) {
+    var el = form.elements[name];
+    return el ? String(el.value || '').trim() : '';
+  }
+
   if (contactForm) {
     var contactSubmit = document.getElementById('contactSubmit') || contactForm.querySelector('[type="submit"]');
     var contactSending = false;
     contactForm.addEventListener('submit', function (e) {
       e.preventDefault();
       if (contactSending) return;
-      if (!formStatus) return;
-      formStatus.textContent = '';
-      formStatus.className = 'form-status';
-      var n = contactForm.name.value.trim();
-      var em = contactForm.email.value.trim();
-      var m = contactForm.message.value.trim();
+      var status = formStatus || document.getElementById('formStatus');
+      if (status) {
+        status.textContent = '';
+        status.className = 'form-status';
+      }
+      var n = formField(contactForm, 'name');
+      var em = formField(contactForm, 'email');
+      var m = formField(contactForm, 'message');
       if (!n || !em || !m) {
-        formStatus.textContent = 'Please fill in all required fields.';
-        formStatus.classList.add('error');
+        if (status) {
+          status.textContent = 'Please fill in all required fields.';
+          status.classList.add('error');
+        }
         return;
       }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) {
-        formStatus.textContent = 'Please enter a valid email address.';
-        formStatus.classList.add('error');
+        if (status) {
+          status.textContent = 'Please enter a valid email address.';
+          status.classList.add('error');
+        }
         return;
       }
       contactSending = true;
@@ -118,28 +129,32 @@
         body: JSON.stringify({
           name: n,
           email: em,
-          company: contactForm.company ? contactForm.company.value.trim() : '',
-          service: contactForm.service ? contactForm.service.value : '',
+          company: formField(contactForm, 'company'),
+          service: formField(contactForm, 'service'),
           message: m,
           website: '',
-          dl_hp: contactForm.dl_hp ? contactForm.dl_hp.value : ''
+          dl_hp: formField(contactForm, 'dl_hp')
         })
       }).then(function (res) {
         return res.json().then(function (body) {
           return { ok: res.ok && body && body.ok, error: body && body.error };
         }).catch(function () {
-          return { ok: false };
+          return { ok: false, error: 'Unable to send your message right now. Please try again.' };
         });
       }).then(function (result) {
         if (!result.ok) {
           throw new Error(result.error || 'Unable to send your message right now. Please try again.');
         }
-        formStatus.textContent = 'Thank you. We\'ll respond within one business day.';
-        formStatus.classList.add('success');
+        if (status) {
+          status.textContent = 'Thank you. We\'ll respond within one business day.';
+          status.classList.add('success');
+        }
         contactForm.reset();
       }).catch(function (err) {
-        formStatus.textContent = err.message || 'Unable to send your message right now. Please try again.';
-        formStatus.classList.add('error');
+        if (status) {
+          status.textContent = err.message || 'Unable to send your message right now. Please try again.';
+          status.classList.add('error');
+        }
       }).finally(function () {
         contactSending = false;
         if (contactSubmit) {

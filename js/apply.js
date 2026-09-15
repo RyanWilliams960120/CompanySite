@@ -18,12 +18,7 @@
   var successEl = document.getElementById('applySuccess');
   var submitting = false;
 
-  var MAX_RESUME_BYTES = 2 * 1024 * 1024;
-  var ALLOWED_RESUME = {
-    'application/pdf': true,
-    'application/msword': true,
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': true
-  };
+  var MAX_RESUME_BYTES = 4 * 1024 * 1024;
 
   if (started) started.value = String(Date.now());
 
@@ -114,13 +109,17 @@
     }
   }
 
+  function formatMb(bytes) {
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
   function resumeOk(file) {
     if (!file) return 'Please attach your resume or CV.';
-    if (file.size > MAX_RESUME_BYTES) return 'Resume must be 2 MB or smaller.';
+    if (file.size > MAX_RESUME_BYTES) {
+      return 'This file is ' + formatMb(file.size) + '. Resume must be 4 MB or smaller.';
+    }
     var name = (file.name || '').toLowerCase();
-    var extOk = /\.(pdf|doc|docx)$/.test(name);
-    var typeOk = !file.type || ALLOWED_RESUME[file.type];
-    if (!extOk || !typeOk) return 'Resume must be a PDF, DOC, or DOCX file.';
+    if (!/\.(pdf|doc|docx)$/.test(name)) return 'Resume must be a PDF, DOC, or DOCX file.';
     return '';
   }
 
@@ -178,6 +177,16 @@
 
   populateSelect();
   setRole(findJob(params().get('position')));
+
+  var resumeInput = document.getElementById('resume');
+  if (resumeInput) {
+    resumeInput.addEventListener('change', function () {
+      var err = resumeOk(resumeInput.files && resumeInput.files[0]);
+      resumeInput.classList.toggle('is-invalid', !!err && resumeInput.files && resumeInput.files[0]);
+      var errEl = form.querySelector('[data-error-for="resume"]');
+      if (errEl) errEl.textContent = (resumeInput.files && resumeInput.files[0]) ? err : '';
+    });
+  }
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();

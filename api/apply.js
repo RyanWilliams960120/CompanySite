@@ -34,7 +34,9 @@ function allowedOrigin(origin) {
   const extra = process.env.ALLOWED_ORIGIN ? process.env.ALLOWED_ORIGIN.split(',') : [];
   const list = [
     'https://www.dracoinlabs.org',
-    'https://dracoinlabs.org'
+    'https://dracoinlabs.org',
+    'http://www.dracoinlabs.org',
+    'http://dracoinlabs.org'
   ].concat(extra.map(function (item) { return item.trim(); }).filter(Boolean));
   if (process.env.VERCEL_ENV !== 'production') {
     list.push('http://localhost:3000', 'http://127.0.0.1:3000');
@@ -127,7 +129,7 @@ async function handler(req, res) {
   }
 
   const f = parsed.fields || {};
-  if (oneLine(f.website, 200)) {
+  if (oneLine(f.dl_hp, 200) || oneLine(f.website, 200)) {
     json(res, 200, { ok: true });
     return;
   }
@@ -190,7 +192,7 @@ async function handler(req, res) {
     return;
   }
   if (parsed.tooLarge) {
-    fail(res, 'Resume must be a PDF, DOC, or DOCX file of 2 MB or less.');
+    fail(res, 'Resume must be a PDF, DOC, or DOCX file of 4 MB or less.');
     return;
   }
   if (!parsed.file || !parsed.file.buffer || !parsed.file.buffer.length) {
@@ -200,7 +202,7 @@ async function handler(req, res) {
 
   const resumeMeta = detectResume(parsed.file.buffer, parsed.file.filename, parsed.file.mime);
   if (!resumeMeta) {
-    fail(res, 'Resume must be a PDF, DOC, or DOCX file of 2 MB or less.');
+    fail(res, 'Resume must be a PDF, DOC, or DOCX file of 4 MB or less.');
     return;
   }
 

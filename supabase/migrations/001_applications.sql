@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS applications (
     experience_years >= 0 AND experience_years <= 50
   ),
   CONSTRAINT applications_resume_size_check CHECK (
-    resume_size > 0 AND resume_size <= 2097152
+    resume_size > 0 AND resume_size <= 4194304
   )
 );
 

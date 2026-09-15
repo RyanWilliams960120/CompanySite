@@ -33,7 +33,9 @@ function allowedOrigin(origin) {
   const extra = process.env.ALLOWED_ORIGIN ? process.env.ALLOWED_ORIGIN.split(',') : [];
   const list = [
     'https://www.dracoinlabs.org',
-    'https://dracoinlabs.org'
+    'https://dracoinlabs.org',
+    'http://www.dracoinlabs.org',
+    'http://dracoinlabs.org'
   ].concat(extra.map(function (item) { return item.trim(); }).filter(Boolean));
   if (process.env.VERCEL_ENV !== 'production') {
     list.push('http://localhost:3000', 'http://127.0.0.1:3000');

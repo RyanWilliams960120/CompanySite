@@ -136,7 +136,7 @@ The apply form and recruiter dashboard need the API, so `file://` browsing will 
 ## 8. Test an application
 
 1. Open `/careers/apply?position=senior-solana-rust-engineer`.
-2. Complete required fields and attach a PDF/DOC/DOCX resume of 2 MB or less.
+2. Complete required fields and attach a PDF/DOC/DOCX resume of 4 MB or less.
 3. Submit. The button should show **Submitting...** and then **Application Submitted Successfully**.
 4. Confirm a row in the Neon table `applications`.
 5. Confirm the recruiting inbox received the notice **with the CV attached**.

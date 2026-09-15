@@ -1,6 +1,6 @@
 const Busboy = require('busboy');
 const crypto = require('crypto');
-const { json, fail, clientIp } = require('../lib/http');
+const { json, fail, clientIp, isAllowedOrigin } = require('../lib/http');
 const { officialTitle, EMPLOYMENT_TYPES } = require('../lib/positions');
 const { oneLine, multiline, isHttpUrl, isEmail } = require('../lib/validate');
 const { getSql } = require('../lib/db');
@@ -30,20 +30,7 @@ function rateLimited(ip) {
 }
 
 function allowedOrigin(origin) {
-  if (!origin) return true;
-  const extra = process.env.ALLOWED_ORIGIN ? process.env.ALLOWED_ORIGIN.split(',') : [];
-  const list = [
-    'https://www.dracoinlabs.org',
-    'https://dracoinlabs.org',
-    'http://www.dracoinlabs.org',
-    'http://dracoinlabs.org'
-  ].concat(extra.map(function (item) { return item.trim(); }).filter(Boolean));
-  if (process.env.VERCEL_ENV !== 'production') {
-    list.push('http://localhost:3000', 'http://127.0.0.1:3000');
-  }
-  const base = String(process.env.APP_BASE_URL || '').trim().replace(/\/+$/, '');
-  if (base) list.push(base);
-  return list.indexOf(origin) !== -1;
+  return isAllowedOrigin(origin);
 }
 
 function parseMultipart(req) {

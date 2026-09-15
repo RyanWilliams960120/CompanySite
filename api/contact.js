@@ -1,6 +1,9 @@
-const { json, fail, clientIp } = require('../lib/http');
+const { json, fail, clientIp, isAllowedOrigin } = require('../lib/http');
 const { oneLine, multiline, isEmail } = require('../lib/validate');
 const { notifyContact } = require('../lib/email');
+const { getSql } = require('../lib/db');
+const { ensureSchema } = require('../lib/schema');
+const crypto = require('crypto');
 
 const GENERIC_ERROR = 'Unable to send your message right now. Please try again.';
 const SERVICE_LABELS = {
@@ -29,20 +32,7 @@ function rateLimited(ip) {
 }
 
 function allowedOrigin(origin) {
-  if (!origin) return true;
-  const extra = process.env.ALLOWED_ORIGIN ? process.env.ALLOWED_ORIGIN.split(',') : [];
-  const list = [
-    'https://www.dracoinlabs.org',
-    'https://dracoinlabs.org',
-    'http://www.dracoinlabs.org',
-    'http://dracoinlabs.org'
-  ].concat(extra.map(function (item) { return item.trim(); }).filter(Boolean));
-  if (process.env.VERCEL_ENV !== 'production') {
-    list.push('http://localhost:3000', 'http://127.0.0.1:3000');
-  }
-  const base = String(process.env.APP_BASE_URL || '').trim().replace(/\/+$/, '');
-  if (base) list.push(base);
-  return list.indexOf(origin) !== -1;
+  return isAllowedOrigin(origin);
 }
 
 function readBody(req) {
@@ -118,6 +108,28 @@ module.exports = async function handler(req, res) {
     return;
   }
 
+  let saved = false;
+  const sql = getSql();
+  if (sql) {
+    try {
+      await ensureSchema(sql);
+      await sql`
+        INSERT INTO contact_messages (id, name, email, company, service, message)
+        VALUES (
+          ${crypto.randomUUID()},
+          ${name},
+          ${email},
+          ${company || ''},
+          ${service || ''},
+          ${message}
+        )
+      `;
+      saved = true;
+    } catch (err) {
+      console.error('[contact] save-failed', err && err.message ? err.message : err);
+    }
+  }
+
   try {
     await notifyContact({
       name: name,
@@ -128,6 +140,15 @@ module.exports = async function handler(req, res) {
     });
   } catch (err) {
     console.error('[contact] email-failed', err && err.message ? err.message : err);
+    if (saved) {
+      json(res, 200, { ok: true });
+      return;
+    }
+    const detail = err && err.message ? String(err.message) : '';
+    if (detail === 'email-not-configured') {
+      fail(res, 'Contact email is not configured on the server. Set EMAIL_HOST, EMAIL_USER, EMAIL_PASSWORD, and CONTACT_EMAIL in Vercel.', 500);
+      return;
+    }
     fail(res, GENERIC_ERROR, 500);
     return;
   }

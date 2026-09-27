@@ -54,13 +54,43 @@
           obs.unobserve(e.target);
         }
       });
-    }, { threshold: 0.1, rootMargin: '0px 0px -32px 0px' });
-    revealEls.forEach(function (el, i) {
-      el.style.transitionDelay = Math.min(i * 0.05, 0.3) + 's';
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach(function (el) {
+      var siblings = [];
+      if (el.parentNode) {
+        var kids = el.parentNode.children;
+        for (var k = 0; k < kids.length; k++) {
+          if (kids[k].getAttribute && kids[k].getAttribute('data-reveal') !== null) siblings.push(kids[k]);
+        }
+      }
+      var idx = 0;
+      for (var i = 0; i < siblings.length; i++) {
+        if (siblings[i] === el) { idx = i; break; }
+      }
+      el.style.transitionDelay = Math.min(idx * 0.08, 0.4) + 's';
       obs.observe(el);
     });
   } else {
     revealEls.forEach(function (el) { el.classList.add('visible'); });
+  }
+
+  var heroMedia = document.querySelector('.hero-media');
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (heroMedia && !reduceMotion) {
+    var ticking = false;
+    function onHeroScroll() {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(function () {
+        var y = window.scrollY || 0;
+        if (y < window.innerHeight) {
+          heroMedia.style.transform = 'translate3d(0,' + (y * 0.22) + 'px,0)';
+        }
+        ticking = false;
+      });
+    }
+    window.addEventListener('scroll', onHeroScroll, { passive: true });
+    onHeroScroll();
   }
 
   function bindForm(form, validate, msg) {

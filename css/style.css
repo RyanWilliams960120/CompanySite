@@ -396,17 +396,6 @@ ul { list-style: none; }
   background: var(--overlay);
 }
 .hero-overlay--heavy { background: var(--overlay-heavy); }
-.hero--brand .hero-overlay {
-  background: linear-gradient(
-    180deg,
-    rgba(2, 12, 40, 0.12) 0%,
-    rgba(2, 12, 40, 0.22) 42%,
-    rgba(2, 12, 40, 0.78) 100%
-  );
-}
-.hero--brand .hero-img {
-  object-position: center 40%;
-}
 
 .hero-body {
   position: relative;

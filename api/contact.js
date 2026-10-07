@@ -140,16 +140,14 @@ module.exports = async function handler(req, res) {
     });
   } catch (err) {
     console.error('[contact] email-failed', err && err.message ? err.message : err);
-    if (saved) {
-      json(res, 200, { ok: true });
-      return;
-    }
     const detail = err && err.message ? String(err.message) : '';
     if (detail === 'email-not-configured') {
-      fail(res, 'Contact email is not configured on the server. Set EMAIL_HOST, EMAIL_USER, EMAIL_PASSWORD, and CONTACT_EMAIL in Vercel.', 500);
+      fail(res, 'Contact email is not configured on the server. In Vercel set EMAIL_HOST=smtp.hostinger.com, EMAIL_USER=info@chainbule.com, EMAIL_PASSWORD, CONTACT_EMAIL=info@chainbule.com, then Redeploy.', 500);
       return;
     }
-    fail(res, GENERIC_ERROR, 500);
+    fail(res, saved
+      ? 'Your message was saved, but Hostinger mail was not delivered. Check EMAIL_USER / EMAIL_PASSWORD for info@chainbule.com in Vercel and Redeploy.'
+      : GENERIC_ERROR, 500);
     return;
   }
 

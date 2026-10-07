@@ -57,9 +57,9 @@
 
   function assessmentCopy(job) {
     if (job.assessment === 'pm') {
-      return 'Shortlisted candidates complete a 60-minute practical assessment focused on project planning, dependencies, risks and delivery management for the ChainBlue Cross-Chain Staking Platform.';
+      return 'Shortlisted candidates complete a 60-minute practical assessment focused on project planning, dependencies, risks and delivery management for the ChainBule Cross-Chain Staking Platform.';
     }
-    return 'Shortlisted candidates complete a 60-minute practical assessment based on the ChainBlue Cross-Chain Staking Platform. Evaluation focuses on a working demonstration — technical problem solving, architecture, security awareness, testing and communication — rather than theoretical questions.';
+    return 'Shortlisted candidates complete a 60-minute practical assessment based on the ChainBule Cross-Chain Staking Platform. Evaluation focuses on a working demonstration — technical problem solving, architecture, security awareness, testing and communication — rather than theoretical questions.';
   }
 
   function employmentLabel(job) {
@@ -180,7 +180,7 @@
       '</div>' +
       '<section class="job-section">' +
         '<h2>Job overview</h2>' +
-        '<p>This role is part of the multidisciplinary team upgrading the ChainBlue Cross-Chain Staking Platform into a scalable, secure and production-ready Web3 staking system across Ethereum and Solana.</p>' +
+        '<p>This role is part of the multidisciplinary team upgrading the ChainBule Cross-Chain Staking Platform into a scalable, secure and production-ready Web3 staking system across Ethereum and Solana.</p>' +
       '</section>' +
       '<section class="job-section">' +
         '<h2>Responsibilities</h2>' +
@@ -252,18 +252,18 @@
         employmentType: ['FULL_TIME', 'CONTRACTOR'],
         hiringOrganization: {
           '@type': 'Organization',
-          name: 'ChainBlue',
-          sameAs: 'https://www.dracoinlabs.org',
-          logo: 'https://www.dracoinlabs.org/assets/logo-mark.jpg'
+          name: 'ChainBule',
+          sameAs: 'https://www.chainbule.com',
+          logo: 'https://www.chainbule.com/assets/logo-mark.jpg'
         },
         jobLocationType: 'TELECOMMUTE',
         applicantLocationRequirements: { '@type': 'Country', name: 'Worldwide' },
         identifier: {
           '@type': 'PropertyValue',
-          name: 'ChainBlue',
+          name: 'ChainBule',
           value: job.id
         },
-        url: 'https://www.dracoinlabs.org/careers#' + job.id,
+        url: 'https://www.chainbule.com/careers#' + job.id,
         industry: 'Blockchain / Web3 / DeFi',
         occupationalCategory: job.department,
         skills: job.techDisplay.join(', '),

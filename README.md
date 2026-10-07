@@ -1,6 +1,6 @@
-# ChainBlue website and careers ATS
+# ChainBule website and careers ATS
 
-Marketing site for [ChainBlue](https://www.dracoinlabs.org), plus a private recruiting workflow for the Careers page.
+Marketing site for [ChainBule](https://www.chainbule.com), plus a private recruiting workflow for the Careers page.
 
 Candidates apply at `/careers` and `/careers/apply`. Applications are validated by `/api/apply`, stored in the Vercel Neon Postgres database, and emailed to recruiting through Hostinger SMTP or Resend. Recruiters review applications at `/admin/applications`.
 
@@ -29,23 +29,23 @@ CVs are stored in Postgres (`resume_bytes`), not in a public bucket. Recruiters 
 
 The candidate still sees success if the database record was saved, even when email delivery fails. Check Vercel function logs for `[careers-apply] email-failed`.
 
-### Hostinger mailbox (recommended for info@chainblue.com)
+### Hostinger mailbox (recommended for info@chainbule.com)
 
 In Vercel → **Settings → Environment Variables**, add:
 
 ```
-CAREERS_EMAIL=info@chainblue.com
-CONTACT_EMAIL=info@chainblue.com
+CAREERS_EMAIL=info@chainbule.com
+CONTACT_EMAIL=info@chainbule.com
 EMAIL_HOST=smtp.hostinger.com
 EMAIL_PORT=465
-EMAIL_USER=info@chainblue.com
+EMAIL_USER=info@chainbule.com
 EMAIL_PASSWORD=
-EMAIL_FROM=ChainBlue Careers <info@chainblue.com>
+EMAIL_FROM=ChainBule Careers <info@chainbule.com>
 ```
 
-`EMAIL_PASSWORD` is the Hostinger mailbox password for `info@chainblue.com`. Redeploy after saving. If port 465 fails, try `EMAIL_PORT=587`.
+`EMAIL_PASSWORD` is the Hostinger mailbox password for `info@chainbule.com`. Redeploy after saving. If port 465 fails, try `EMAIL_PORT=587`.
 
-Create the `info@chainblue.com` mailbox in Hostinger Email first. The public website can stay on `dracoinlabs.org`; MX/SPF below belong on the **chainblue.com** DNS zone (the domain that receives mail), not on the Vercel website records.
+Create the `info@chainbule.com` mailbox in Hostinger Email first. The public website can stay on `dracoinlabs.org`; MX/SPF below belong on the **chainbule.com** DNS zone (the domain that receives mail), not on the Vercel website records.
 
 | Type | Name | Priority | Content |
 | --- | --- | --- | --- |
@@ -89,12 +89,12 @@ ALLOWED_ORIGIN=
 | --- | --- |
 | `DATABASE_URL` | Neon connection string (usually injected by the Vercel Neon integration) |
 | `POSTGRES_URL` | Alternate Neon URL if `DATABASE_URL` is not set |
-| `CAREERS_EMAIL` | Recruiting inbox, e.g. `info@chainblue.com` |
+| `CAREERS_EMAIL` | Recruiting inbox, e.g. `info@chainbule.com` |
 | `EMAIL_HOST` | Hostinger SMTP host, `smtp.hostinger.com` |
 | `EMAIL_PORT` | `465` (SSL) or `587` (TLS) |
-| `EMAIL_USER` | Mailbox username, e.g. `info@chainblue.com` |
+| `EMAIL_USER` | Mailbox username, e.g. `info@chainbule.com` |
 | `EMAIL_PASSWORD` | Mailbox password |
-| `EMAIL_FROM` | From header, e.g. `ChainBlue Careers <info@chainblue.com>` |
+| `EMAIL_FROM` | From header, e.g. `ChainBule Careers <info@chainbule.com>` |
 | `RESEND_API_KEY` | Optional Resend API key if not using SMTP |
 | `RESEND_FROM` | Optional Resend From address |
 | `APP_BASE_URL` | Public site origin, no trailing slash. Optional on Vercel (production URL is used if unset) |
@@ -108,7 +108,7 @@ ALLOWED_ORIGIN=
 ## 6. Configure those variables in Vercel
 
 1. Confirm the Neon integration already added `DATABASE_URL` or `POSTGRES_URL`.
-2. Add Hostinger SMTP variables so applications reach `info@chainblue.com`.
+2. Add Hostinger SMTP variables so applications reach `info@chainbule.com`.
 3. Add admin variables if you want `/admin/applications`.
 4. Do not expose `DATABASE_URL`, `EMAIL_PASSWORD`, `RESEND_API_KEY`, `ADMIN_PASSWORD`, or `ADMIN_SESSION_SECRET` in browser JavaScript.
 5. Redeploy after saving variables.

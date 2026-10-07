@@ -49,7 +49,7 @@
     if (heroLead) heroLead.textContent = 'Applying for: ' + job.title;
     if (positionSelect) positionSelect.value = job.slug;
     if (positionSelectGroup) positionSelectGroup.hidden = true;
-    document.title = 'Apply — ' + job.title + ' | ChainBlue';
+    document.title = 'Apply — ' + job.title + ' | ChainBule';
   }
 
   function populateSelect() {

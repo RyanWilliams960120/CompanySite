@@ -203,7 +203,7 @@
 
     function render(app, statuses) {
       article.hidden = false;
-      document.title = app.name + ' | ChainBlue Recruiting';
+      document.title = app.name + ' | ChainBule Recruiting';
       document.getElementById('detailName').textContent = app.name;
       document.getElementById('detailPosition').textContent = app.position;
       var pill = document.getElementById('detailStatusPill');
